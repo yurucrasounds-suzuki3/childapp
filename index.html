@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>きょうりゅう たんけんたい</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif;
+      background: linear-gradient(to bottom, #b8f4ff, #e8fff2);
+      min-height: 100vh;
+      color: #234;
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: 10px;
+      margin-bottom: 8px;
+      color: #1f5f4a;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 14px;
+      margin-bottom: 14px;
+      color: #406b5f;
+    }
+
+    .panel {
+      background: rgba(255,255,255,0.9);
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      margin-bottom: 12px;
+    }
+
+    .top-row {
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .mini-box {
+      flex: 1;
+      min-width: 100px;
+      background: #f7fffb;
+      border-radius: 16px;
+      padding: 10px;
+      text-align: center;
+      border: 2px solid #d7f2e5;
+      font-weight: bold;
+    }
+
+    .mission {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      line-height: 1.5;
+      color: #194c3d;
+    }
+
+    .mission-small {
+      text-align: center;
+      margin-top: 8px;
+      font-size: 14px;
+      color: #51756a;
+    }
+
+    .game-area {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 8px;
+      margin-bottom: 12px;
+    }
+
+    .dino-card {
+      background: #ffffff;
+      border-radius: 22px;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid #dff5ea;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.07);
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      user-select: none;
+    }
+
+    .dino-card:active {
+      transform: scale(0.96);
+    }
+
+    .dino-emoji {
+      font-size: 42px;
+      margin-bottom: 6px;
+    }
+
+    .dino-name {
+      font-size: 15px;
+      font-weight: bold;
+      color: #285345;
+    }
+
+    .correct {
+      background: #dcffe8 !important;
+      border-color: #60d394 !important;
+    }
+
+    .wrong {
+      background: #ffe3e3 !important;
+      border-color: #ff8b8b !important;
+    }
+
+    .hidden {
+      visibility: hidden;
+    }
+
+    .bottom-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      flex: 1;
+      border: none;
+      border-radius: 16px;
+      padding: 14px 12px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 5px 12px rgba(0,0,0,0.08);
+    }
+
+    .speak-btn {
+      background: #ffd66b;
+      color: #5a4300;
+    }
+
+    .restart-btn {
+      background: #82d7ff;
+      color: #0d4260;
+    }
+
+    .message {
+      text-align: center;
+      min-height: 34px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #1c5c4a;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      background: white;
+      width: 100%;
+      max-width: 360px;
+      border-radius: 24px;
+      padding: 22px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    }
+
+    .modal h2 {
+      margin-top: 0;
+      font-size: 28px;
+      color: #1c5c4a;
+    }
+
+    .modal p {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .modal button {
+      margin-top: 12px;
+      background: #7fe0a9;
+      color: #145338;
+    }
+
+    @media (max-width: 380px) {
+      .game-area {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+.dino-img {
+  width: 100%;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dino-img img {
+  max-width: 90%;
+  max-height: 70px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.dino-card {
+  background: #ffffff;
+  border-radius: 22px;
+  min-height: 110px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #dff5ea;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.07);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  user-select: none;
+}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="title">🦖 きょうりゅう たんけんたい 🦕</div>
+    <div class="subtitle">ただしい きょうりゅうを みつけよう！</div>
+
+    <div class="panel top-row">
+      <div class="mini-box">ステージ<br><span id="stageNum">1</span></div>
+      <div class="mini-box">せいかい<br><span id="scoreNum">0</span></div>
+      <div class="mini-box">ミス<br><span id="missNum">0</span></div>
+    </div>
+
+    <div class="panel">
+      <div class="mission" id="missionText">ティラノを 3びき みつけよう！</div>
+      <div class="mission-small">おなじ きょうりゅうを タップしてね</div>
+    </div>
+
+    <div class="game-area" id="gameArea"></div>
+
+    <div class="panel">
+      <div class="message" id="messageText">がんばって さがしてみよう！</div>
+    </div>
+
+    <div class="bottom-buttons">
+      <button class="speak-btn" id="speakBtn">🔊 よみあげ</button>
+      <button class="restart-btn" id="restartBtn">🔄 はじめから</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h2 id="modalTitle">クリア！</h2>
+      <p id="modalText">つぎのステージへ いこう！</p>
+      <button id="nextBtn">つぎへ</button>
+    </div>
+  </div>
+
+  <script>
+    const dinosaurs = [
+  { name: "ティラノ", img: "images/trex.png" },
+  { name: "トリケラ", img: "images/triceratops.png" },
+  { name: "ブラキオ", img: "images/brachio.png" },
+  { name: "ステゴ", img: "images/stego.png" },
+  { name: "ギガノト", img: "images/giga.png" },
+  { name: "アロサウルス", img: "images/allo.png" },
+  { name: "アンキロ", img: "images/ankylo.png" }
+];
+
+    let stage = 1;
+    let score = 0;
+    let miss = 0;
+    let targetDino = null;
+    let targetCount = 0;
+    let foundCount = 0;
+    let cards = [];
+
+    const stageNum = document.getElementById("stageNum");
+    const scoreNum = document.getElementById("scoreNum");
+    const missNum = document.getElementById("missNum");
+    const missionText = document.getElementById("missionText");
+    const messageText = document.getElementById("messageText");
+    const gameArea = document.getElementById("gameArea");
+    const speakBtn = document.getElementById("speakBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const overlay = document.getElementById("overlay");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalText = document.getElementById("modalText");
+    const nextBtn = document.getElementById("nextBtn");
+
+    function shuffle(array) {
+      return [...array].sort(() => Math.random() - 0.5);
+    }
+
+    function getTwoTypes() {
+      const shuffled = shuffle(dinosaurs);
+      return [shuffled[0], shuffled[1]];
+    }
+
+    function makeStage() {
+      gameArea.innerHTML = "";
+      foundCount = 0;
+
+      stageNum.textContent = stage;
+      scoreNum.textContent = score;
+      missNum.textContent = miss;
+
+      const [dinoA, dinoB] = getTwoTypes();
+      targetDino = Math.random() < 0.5 ? dinoA : dinoB;
+
+      // ステージが上がると少しずつ増やす
+      const totalCards = Math.min(6 + (stage - 1), 9);
+      targetCount = Math.min(2 + Math.floor((stage - 1) / 2), 5);
+
+      // targetCount が totalCards を超えないように調整
+      if (targetCount >= totalCards) targetCount = totalCards - 1;
+
+      cards = [];
+
+      for (let i = 0; i < targetCount; i++) {
+        cards.push({ ...targetDino, isTarget: true, found: false });
+      }
+
+      const otherDino = targetDino.name === dinoA.name ? dinoB : dinoA;
+      const remain = totalCards - targetCount;
+
+      for (let i = 0; i < remain; i++) {
+        cards.push({ ...otherDino, isTarget: false, found: false });
+      }
+
+      cards = shuffle(cards);
+
+      missionText.textContent = `${targetDino.name}を ${targetCount}びき みつけよう！`;
+      messageText.textContent = "がんばって さがしてみよう！";
+
+      cards.forEach((card, index) => {
+        const div = document.createElement("div");
+        div.className = "dino-card";
+        div.innerHTML = `
+          <div class="dino-img">
+  <img src="${card.img}" />
+</div>
+          <div class="dino-name">${card.name}</div>
+        `;
+
+        div.addEventListener("click", () => handleTap(card, div, index));
+        gameArea.appendChild(div);
+      });
+
+      speakMission();
+    }
+
+    function handleTap(card, element, index) {
+      if (card.found) return;
+
+      if (card.isTarget) {
+        card.found = true;
+        foundCount++;
+        score++;
+        scoreNum.textContent = score;
+        element.classList.add("correct");
+        messageText.textContent = `せいかい！ あと ${targetCount - foundCount} びき！`;
+
+        setTimeout(() => {
+          element.classList.add("hidden");
+        }, 350);
+
+        if (foundCount >= targetCount) {
+          setTimeout(() => {
+            showClear();
+          }, 500);
+        }
+      } else {
+        miss++;
+        missNum.textContent = miss;
+        element.classList.add("wrong");
+        messageText.textContent = "ちがうよ！ もういちど！";
+
+        setTimeout(() => {
+          element.classList.remove("wrong");
+        }, 400);
+      }
+    }
+
+    function showClear() {
+      overlay.classList.add("show");
+
+      if (stage >= 5) {
+        modalTitle.textContent = "ゲームクリア！";
+        modalText.textContent = "きょうりゅう たんけん だいせいこう！ もういちど あそぼう！";
+        nextBtn.textContent = "はじめから";
+      } else {
+        modalTitle.textContent = "ステージクリア！";
+        modalText.textContent = "よくできたね！ つぎのステージへ いこう！";
+        nextBtn.textContent = "つぎへ";
+      }
+    }
+
+    function speakMission() {
+      if (!("speechSynthesis" in window)) return;
+
+      window.speechSynthesis.cancel();
+
+      const text = `${targetDino.name}を ${targetCount}びき みつけよう`;
+      const uttr = new SpeechSynthesisUtterance(text);
+      uttr.lang = "ja-JP";
+      uttr.rate = 0.95;
+      uttr.pitch = 1.15;
+      speechSynthesis.speak(uttr);
+    }
+
+    speakBtn.addEventListener("click", speakMission);
+
+    restartBtn.addEventListener("click", () => {
+      stage = 1;
+      score = 0;
+      miss = 0;
+      makeStage();
+    });
+
+    nextBtn.addEventListener("click", () => {
+      overlay.classList.remove("show");
+
+      if (stage >= 5) {
+        stage = 1;
+        score = 0;
+        miss = 0;
+      } else {
+        stage++;
+      }
+
+      makeStage();
+    });
+
+    makeStage();
+  </script>
+</body>
+</html>
